@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, CardImg, CardImgOverlay, CardText, CardBody, CardTitle } from 'reactstrap';
+import { Card, CardImg, CardText, CardBody, CardTitle } from 'reactstrap';
 
 class CampsiteInfo extends Component {
 
@@ -40,7 +40,7 @@ class CampsiteInfo extends Component {
   render () {
     if (this.props.campsite) {
       return (
-        <div>
+        <div className="container">
           <div className="row"> {this.renderCampsite(this.props.campsite)} </div>
           <div> {this.renderComments(this.props.campsite.comments)} </div>
         </div>
