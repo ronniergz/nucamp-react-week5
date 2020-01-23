@@ -1,6 +1,9 @@
-import React from 'react';
-import { Card, CardImg, CardText, CardBody, CardTitle, Breadcrumb, BreadcrumbItem } from 'reactstrap';
+import React, { Component } from 'react';
+import { Card, CardImg, CardText, CardBody, CardTitle, Breadcrumb, BreadcrumbItem, Button, Modal, ModalHeader, ModalBody, Form, FormGroup, Input, Label } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { Control, LocalForm, Errors } from 'react-redux-form';
+
+
 
 
 function RenderCampsite({campsite}) {
@@ -27,14 +30,95 @@ function RenderComments({comments}) {
             <div key={comment.id}> 
               <div>{comment.text} </div>
               <div>--{comment.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comment.date)))}</div>
+              <br />
             </div>
           )
-        })};
+        })}
         
+        <CommentForm />
       </div>
     );
-  } return <div />
+  } return <div />;
 };
+
+class CommentForm extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      rating: '',
+      author: '',
+      text: '',
+      isModalOpen: false
+    };
+    this.toggleModal = this.toggleModal.bind(this);
+    this.handleSubmitComment = this.handleSubmitComment.bind(this);
+  }  
+
+  toggleModal() {
+    this.setState({
+        isModalOpen: !this.state.isModalOpen
+    });
+  }
+
+  handleSubmitComment(values) {
+    alert(`Rating: ${values.rating} Your Name: ${values.author} Comment: ${values.text}`);
+    this.toggleModal();
+  }
+
+  validate(author) {
+    const errors = {
+      author: '',
+    };
+
+    if (author.length < 2) {
+      errors.author = 'First name must be at least 2 characters.';
+    } else if (author.length > 15) {
+      errors.author = 'First name must be less than 15 characters';
+    }
+
+    return errors;
+  }
+
+  render() {
+    const errors = this.validate(this.state.author);
+    return (
+      <React.Fragment>
+        <Button outline onClick={this.toggleModal}>
+          <i className="fa fa-pencil fa-lg" />Submit Comment
+        </Button>
+
+          <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+          <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
+          <ModalBody>
+            <LocalForm onSubmit={values => this.handleSubmitComment(values)}>
+              <div className="form-group">
+                <Label htmlFor="rating">Rating</Label>
+                <Control.select model=".rating" id="rating" className="form-control">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </Control.select>
+              </div>
+              <div className="form-group">
+                <Label htmlFor="name">Your Name</Label>
+                <Control.text model=".author" id="name" className="form-control"/>
+              </div>
+              <div className="form-group">
+                <Label htmlFor="text">Comment</Label>
+                <Control.textarea model=".text" id="text" className="form-control"/>
+              </div>
+              <Button type="submit" value="submit" color="primary">Submit</Button>
+            </LocalForm>
+          </ModalBody>
+        </Modal>
+      </React.Fragment>  
+
+    );
+  }
+}
 
 function CampsiteInfo (props) {
   if (props.campsite) {
@@ -58,6 +142,7 @@ function CampsiteInfo (props) {
   );   
   } return <div />
 };
+
 
 
 
