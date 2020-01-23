@@ -3,8 +3,9 @@ import { Card, CardImg, CardText, CardBody, CardTitle, Breadcrumb, BreadcrumbIte
 import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
 
-
-
+const required = val => val && val.length;
+const maxLength = len => val => !val || (val.length <= len);
+const minLength = len => val => val && (val.length >= len);
 
 function RenderCampsite({campsite}) {
   return (
@@ -49,6 +50,9 @@ class CommentForm extends Component {
       rating: '',
       author: '',
       text: '',
+      touched: {
+        author: false
+      },      
       isModalOpen: false
     };
     this.toggleModal = this.toggleModal.bind(this);
@@ -61,6 +65,12 @@ class CommentForm extends Component {
     });
   }
 
+  handleBlur = (field) => () => {
+    this.setState({
+        touched: {...this.state.touched, [field]: true}
+    });
+  }  
+
   handleSubmitComment(values) {
     alert(`Rating: ${values.rating} Your Name: ${values.author} Comment: ${values.text}`);
     this.toggleModal();
@@ -71,12 +81,13 @@ class CommentForm extends Component {
       author: '',
     };
 
-    if (author.length < 2) {
-      errors.author = 'First name must be at least 2 characters.';
-    } else if (author.length > 15) {
-      errors.author = 'First name must be less than 15 characters';
-    }
-
+    if (this.state.touched.author) {
+      if (author.length < 2) {
+        errors.author = 'First name must be at least 2 characters.';
+      } else if (author.length > 15) {
+        errors.author = 'First name must be less than 15 characters';
+      }
+    }  
     return errors;
   }
 
@@ -103,8 +114,25 @@ class CommentForm extends Component {
                 </Control.select>
               </div>
               <div className="form-group">
-                <Label htmlFor="name">Your Name</Label>
-                <Control.text model=".author" id="name" className="form-control"/>
+                <Label htmlFor="author">Your Name</Label>
+                <Control.text model=".author" id="author" 
+                  className="form-control"
+                  validators={{
+                    required, 
+                    minLength: minLength(2),
+                    maxLength: maxLength(15)
+                }}/>
+                <Errors
+                    className="text-danger"
+                    model=".author"
+                    show="touched"
+                    component="div"
+                    messages={{
+                        required: 'Required',
+                        minLength: 'Must be at least 2 characters',
+                        maxLength: 'Must be 15 characters or less'
+                    }}
+                />  
               </div>
               <div className="form-group">
                 <Label htmlFor="text">Comment</Label>
