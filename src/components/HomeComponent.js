@@ -5,23 +5,19 @@ import { baseUrl } from '../shared/baseUrl';
 
 function RenderCard({item, isLoading, errMess}) {
   if (isLoading) {
-    return (
-      <Loading />
-      );
-    }
-    if (errMess) {
-      return (
-        <h4>{errMess}</h4>
-        );
-      }
-      return (
-        <Card>
-          <CardImg src={baseUrl + item.image} alt={item.name} />
-          <CardBody>
-          <CardTitle>{item.name}</CardTitle>
-          <CardText>{item.description}</CardText>
-          </CardBody>
-      </Card>
+  return <Loading />;
+  }
+  if (errMess) {
+    return <h4>{errMess}</h4>;
+  }
+  return (
+    <Card>
+      <CardImg src={baseUrl + item.image} alt={item.name} />
+      <CardBody>
+        <CardTitle>{item.name}</CardTitle>
+        <CardText>{item.description}</CardText>
+      </CardBody>
+    </Card>
   );
 }
 
@@ -36,14 +32,16 @@ function Home(props) {
               />
           </div>
           <div className="col-md m-1">
-              <RenderCard
-                item={props.promotion}
+              <RenderCard item={props.promotion}
                 isLoading={props.promotionLoading}
                 errMess={props.promotionErrMess}
-              />
+                />
           </div>
           <div className="col-md m-1">
-              <RenderCard item={props.partner} />
+              <RenderCard item={props.partner}
+                isLoading={props.partnerLoading}
+                errMess={props.partnerErrMess}
+              />
           </div>
       </div>
   </div>
